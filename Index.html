@@ -1,0 +1,416 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2457a6">
+  <meta name="description" content="Organize ideias, planeje aulas e prepare atividades com o Professor IA BR.">
+  <title>Professor IA BR</title>
+
+  <style>
+    :root {
+      --azul: #2457a6;
+      --azul-escuro: #183c78;
+      --amarelo: #ffd45c;
+      --fundo: #f4f7fc;
+      --texto: #203047;
+      --branco: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--texto);
+      background: var(--fundo);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    header {
+      padding: 16px 20px;
+      background: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 2px 12px #183c7812;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .marca {
+      color: var(--azul);
+      font-size: 18px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .marca span { color: #e4a900; }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    nav button {
+      border: 0;
+      background: transparent;
+      padding: 9px 11px;
+      border-radius: 10px;
+      color: var(--texto);
+      font: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    nav button:hover,
+    nav button.ativo {
+      background: #eaf0fb;
+      color: var(--azul);
+    }
+
+    main {
+      width: min(100% - 28px, 900px);
+      margin: 28px auto 60px;
+    }
+
+    .capa {
+      min-height: 280px;
+      border-radius: 24px;
+      padding: 36px;
+      color: white;
+      background:
+        radial-gradient(circle at 85% 20%, #ffd45c 0 7%, transparent 7.5%),
+        radial-gradient(circle at 90% 78%, #55b88a 0 12%, transparent 12.5%),
+        linear-gradient(125deg, var(--azul-escuro), #3778c9);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .capa::after {
+      content: "📚 ✏️ 💡";
+      position: absolute;
+      right: 5%;
+      bottom: 25px;
+      font-size: clamp(38px, 8vw, 72px);
+      transform: rotate(-7deg);
+    }
+
+    .capa-texto {
+      max-width: 520px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .capa h1 {
+      font-size: clamp(30px, 6vw, 48px);
+      margin: 0 0 10px;
+    }
+
+    .capa p {
+      font-size: 17px;
+      line-height: 1.5;
+      max-width: 430px;
+    }
+
+    .botao {
+      display: inline-block;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: var(--amarelo);
+      color: #24334a;
+      font-weight: 750;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .botao-secundario {
+      background: #eaf0fb;
+      color: var(--azul);
+    }
+
+    h2 { margin: 30px 0 14px; }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .cartao {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 5px 20px #183c780c;
+    }
+
+    .cartao h3 { margin: 8px 0; }
+    .icone { font-size: 30px; }
+
+    .cartao p {
+      color: #5b6879;
+      line-height: 1.5;
+    }
+
+    .pagina { display: none; }
+    .pagina.visivel { display: block; }
+
+    label {
+      display: block;
+      font-weight: 650;
+      margin: 16px 0 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccd5e3;
+      border-radius: 10px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    form .botao {
+      margin-top: 18px;
+      background: var(--azul);
+      color: white;
+    }
+
+    .resultado {
+      margin-top: 18px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .aviso {
+      color: #657286;
+      font-size: 14px;
+    }
+
+    .item-material {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #edf0f5;
+      padding: 12px 0;
+    }
+
+    .remover {
+      flex-shrink: 0;
+      border: 0;
+      background: #fff0f0;
+      color: #a83232;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      color: #718096;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      nav { width: 100%; }
+      .capa { padding: 25px 22px 120px; }
+      .capa::after { right: 18px; bottom: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="marca">📘 Professor <span>IA BR</span></div>
+
+    <nav aria-label="Menu principal">
+      <button class="ativo" data-pagina="inicio">Início</button>
+      <button data-pagina="planejar">Planejar aula</button>
+      <button data-pagina="atividade">Atividades</button>
+      <button data-pagina="materiais">Materiais</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="pagina visivel">
+      <div class="capa">
+        <div class="capa-texto">
+          <h1>Mais tempo para ensinar.</h1>
+          <p>Organize suas ideias, planeje aulas e prepare atividades em um só lugar.</p>
+          <button class="botao" type="button" onclick="abrir('planejar')">
+            Começar
+          </button>
+        </div>
+      </div>
+
+      <h2>O que você quer fazer?</h2>
+
+      <div class="grade">
+        <article class="cartao">
+          <div class="icone">🗓️</div>
+          <h3>Planejar uma aula</h3>
+          <p>Organize tema, turma, objetivos e etapas da aula.</p>
+          <button class="botao botao-secundario" type="button" onclick="abrir('planejar')">
+            Abrir planejador
+          </button>
+        </article>
+
+        <article class="cartao">
+          <div class="icone">✍️</div>
+          <h3>Preparar atividade</h3>
+          <p>Monte uma proposta de atividade para sua turma.</p>
+          <button class="botao botao-secundario" type="button" onclick="abrir('atividade')">
+            Criar atividade
+          </button>
+        </article>
+
+        <article class="cartao">
+          <div class="icone">📂</div>
+          <h3>Guardar materiais</h3>
+          <p>Salve anotações neste aparelho para consultar depois.</p>
+          <button class="botao botao-secundario" type="button" onclick="abrir('materiais')">
+            Ver materiais
+          </button>
+        </article>
+      </div>
+
+      <section class="cartao" style="margin-top: 16px" aria-labelledby="criador">
+        <h2 id="criador" style="margin-top: 0">Sobre o criador</h2>
+        <p>Professor IA BR foi criado por Carlos Brito.</p>
+        <a
+          class="botao"
+          href="https://www.instagram.com/carlosbrito.07/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram @carlosbrito.07
+        </a>
+      </section>
+    </section>
+
+    <section id="planejar" class="pagina">
+      <h1>Planejar aula</h1>
+      <p class="aviso">
+        Preencha os campos para montar um rascunho. Revise e adapte para sua turma.
+      </p>
+
+      <form id="formAula" class="cartao">
+        <label for="tema">Tema da aula</label>
+        <input id="tema" required placeholder="Ex.: Ciclo da água">
+
+        <label for="turma">Turma / ano</label>
+        <input id="turma" placeholder="Ex.: 5º ano">
+
+        <label for="duracao">Duração</label>
+        <input id="duracao" placeholder="Ex.: 50 minutos">
+
+        <label for="objetivo">Objetivo de aprendizagem</label>
+        <textarea id="objetivo" placeholder="O que a turma deverá aprender?"></textarea>
+
+        <button class="botao" type="submit">Montar rascunho</button>
+      </form>
+
+      <div id="resultadoAula" class="cartao resultado" hidden></div>
+    </section>
+
+    <section id="atividade" class="pagina">
+      <h1>Criar atividade</h1>
+      <p class="aviso">
+        Este modelo ajuda a organizar uma ideia. Confira se está adequada aos alunos.
+      </p>
+
+      <form id="formAtividade" class="cartao">
+        <label for="temaAtividade">Assunto</label>
+        <input id="temaAtividade" required placeholder="Ex.: Leitura e interpretação">
+
+        <label for="tipoAtividade">Tipo de atividade</label>
+        <select id="tipoAtividade">
+          <option>Discussão em grupo</option>
+          <option>Perguntas e respostas</option>
+          <option>Pesquisa</option>
+          <option>Produção de texto</option>
+          <option>Desenho ou esquema</option>
+        </select>
+
+        <label for="detalhes">Orientações ou observações</label>
+        <textarea id="detalhes" placeholder="Ex.: usar um texto curto e trabalhar em duplas"></textarea>
+
+        <button class="botao" type="submit">Montar atividade</button>
+      </form>
+
+      <div id="resultadoAtividade" class="cartao resultado" hidden></div>
+    </section>
+
+    <section id="materiais" class="pagina">
+      <h1>Meus materiais</h1>
+
+      <form id="formMaterial" class="cartao">
+        <label for="novoMaterial">Adicionar uma anotação</label>
+        <textarea id="novoMaterial" required placeholder="Escreva uma ideia ou lembrete..."></textarea>
+        <button class="botao" type="submit">Salvar anotação</button>
+      </form>
+
+      <div id="listaMateriais" class="cartao" style="margin-top: 16px"></div>
+    </section>
+  </main>
+
+  <footer>
+    Professor IA BR · Rascunhos para revisar e adaptar
+  </footer>
+
+  <script>
+    function abrir(id) {
+      document.querySelectorAll(".pagina").forEach(pagina => {
+        pagina.classList.remove("visivel");
+      });
+
+      document.getElementById(id).classList.add("visivel");
+
+      document.querySelectorAll("nav button").forEach(botao => {
+        botao.classList.toggle("ativo", botao.dataset.pagina === id);
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelectorAll("nav button").forEach(botao => {
+      botao.addEventListener("click", () => abrir(botao.dataset.pagina));
+    });
+
+    document.getElementById("formAula").addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      const tema = document.getElementById("tema").value.trim();
+      const turma = document.getElementById("turma").value.trim() || "não informada";
+      const duracao = document.getElementById("duracao").value.trim() || "a definir";
+      const objetivo = document.getElementById("objetivo").value.trim()
+        || "Defina o que os alunos deverão aprender.";
+
+      const texto = `RASCUNHO DE PLANO DE AULA
+
+Tema: ${tema}
+Turma: ${turma}
+Duração: ${duracao}
+
+Objetivo:
+${objetivo}
